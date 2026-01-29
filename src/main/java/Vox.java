@@ -22,7 +22,7 @@ public class Vox {
         // Initialise Scanner
         Scanner in = new Scanner(System.in);
         // Initialise a String array to maintain user list
-        ArrayList<String> userInputs = new ArrayList<String>();
+        ArrayList<Task> userInputs = new ArrayList<Task>();
         String logo = "__      __          \n"
                 + "\\ \\    / /_  __  __ \n"
                 + " \\ \\  / / _ \\ \\ \\/ /\n"
@@ -37,21 +37,44 @@ public class Vox {
             System.out.print(GREEN);
             line = in.nextLine();
             System.out.print(RESET);
-            if (line.trim().equalsIgnoreCase("list")) {
-                printBreaks();
-                for (int i = 0; i < userInputs.size(); i++) {
-                    System.out.println(("    " + (i + 1) + ". " + userInputs.get(i)));
-                }
-                printBreaks();
-            } else {
-                userInputs.add(line);
-                printBreaks();
-                System.out.println("    added: " + line);
-                printBreaks();
-            }
+
+            // Terminating after bye
             if (line.trim().equalsIgnoreCase("bye")) {
                 printLine();
                 break;
+            }
+            // Printing the items as a list
+            else if (line.trim().equalsIgnoreCase("list")) {
+                printBreaks();
+                for (int i = 0; i < userInputs.size(); i++) {
+                    // Retrieve task for printing
+                    Task t = userInputs.get(i);
+                    System.out.println(("    " + (i + 1) + ".[" + t.getStatusIcon() + "] " + t.getTaskName()));
+                }
+                printBreaks();
+            }
+            // Marking the items
+            else if (line.trim().startsWith("mark")) {
+                int index = Integer.parseInt(line.split(" ")[1]) - 1;
+                Task t = userInputs.get(index);
+                t.setMarked(); // Make the task marked
+                System.out.println("    Nice! I've marked this task as done:");
+                System.out.println("      [" + t.getStatusIcon() + "] " + t.getTaskName());
+            }
+            // Unmarking the items
+            else if (line.trim().startsWith("unmark")) {
+                int index = Integer.parseInt(line.split(" ")[1]) - 1;
+                Task t = userInputs.get(index);
+                t.setUnmarked(); // Make the task unmarked
+                System.out.println("    I've unmarked this task as done:");
+                System.out.println("      [" + t.getStatusIcon() + "] " + t.getTaskName());
+            }
+            // Adding a new task if none of the above is fulfilled
+            else {
+                userInputs.add(new Task(line));
+                printBreaks();
+                System.out.println("    added: " + line);
+                printBreaks();
             }
         }
         System.out.println("Bye. Hope to see you again!");
