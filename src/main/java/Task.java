@@ -24,4 +24,9 @@ public class Task {
     public String getStatusIcon() {
         return (isMarked ? "X" : " ");
     }
+
+    public String toString() {
+        return "";
+    }
 }
+

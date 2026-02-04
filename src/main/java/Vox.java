@@ -68,9 +68,7 @@ public class Vox {
                 t.setUnmarked(); // Make the task unmarked
                 System.out.println("    I've unmarked this task as done:");
                 System.out.println("      [" + t.getStatusIcon() + "] " + t.getTaskName());
-            }
-            // Adding a new task if none of the above is fulfilled
-            else {
+            } else {
                 userInputs.add(new Task(line));
                 printBreaks();
                 System.out.println("    added: " + line);
