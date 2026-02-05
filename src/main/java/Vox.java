@@ -66,6 +66,21 @@ public class Vox {
                 printBreaks();
             }
 
+            else if (line.trim().startsWith("event")) {
+                // Extract the description after "deadline "
+                String description = line.substring(4).trim();
+                // Since you are splitting with the /, it will disappear after the splitting so replace first space with ": "
+                String limit = line.trim().split("/", 2)[1].replaceFirst(" ", ": ");
+                Event newEvent = new Event(description, limit);
+                userInputs.add(newEvent);
+
+                printBreaks();
+                System.out.println("    Got it. I've added this task:");
+                System.out.println("      " + newEvent); // Uses the new toString()
+                System.out.println("    Now you have " + userInputs.size() + " tasks in the list.");
+                printBreaks();
+            }
+
             // Terminating after bye
             else if (line.trim().equalsIgnoreCase("bye")) {
                 printLine();
