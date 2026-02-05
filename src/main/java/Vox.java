@@ -38,8 +38,36 @@ public class Vox {
             line = in.nextLine();
             System.out.print(RESET);
 
+            if (line.trim().startsWith("todo")) {
+                // Extract the description after "todo "
+                String description = line.substring(4).trim();
+                Todo newTodo = new Todo(description);
+                userInputs.add(newTodo);
+
+                printBreaks();
+                System.out.println("    Got it. I've added this task:");
+                System.out.println("      " + newTodo); // Uses the new toString()
+                System.out.println("    Now you have " + userInputs.size() + " tasks in the list.");
+                printBreaks();
+            }
+
+            else if (line.trim().startsWith("deadline")) {
+                // Extract the description after "deadline "
+                String description = line.substring(4).trim();
+                // Since you are splitting with the /, it will disappear after the splitting so replace first space with ": "
+                String limit = line.trim().split("/", 2)[1].replaceFirst(" ", ": ");
+                Deadline newDeadline = new Deadline(description, limit);
+                userInputs.add(newDeadline);
+
+                printBreaks();
+                System.out.println("    Got it. I've added this task:");
+                System.out.println("      " + newDeadline); // Uses the new toString()
+                System.out.println("    Now you have " + userInputs.size() + " tasks in the list.");
+                printBreaks();
+            }
+
             // Terminating after bye
-            if (line.trim().equalsIgnoreCase("bye")) {
+            else if (line.trim().equalsIgnoreCase("bye")) {
                 printLine();
                 break;
             }
@@ -49,7 +77,7 @@ public class Vox {
                 for (int i = 0; i < userInputs.size(); i++) {
                     // Retrieve task for printing
                     Task t = userInputs.get(i);
-                    System.out.println(("    " + (i + 1) + ".[" + t.getStatusIcon() + "] " + t.getTaskName()));
+                    System.out.println("    " + (i + 1) + "." + userInputs.get(i));
                 }
                 printBreaks();
             }

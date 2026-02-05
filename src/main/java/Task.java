@@ -25,8 +25,10 @@ public class Task {
         return (isMarked ? "X" : " ");
     }
 
+    @Override
     public String toString() {
-        return "";
+        // Returns: [X] task name
+        return "[ ][" + getStatusIcon() + "] " + getTaskName();
     }
 }
 
