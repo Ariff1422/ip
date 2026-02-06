@@ -1,7 +1,63 @@
-Hello from
- ____        _        
-|  _ \ _   _| | _____ 
-| | | | | | | |/ / _ \
-| |_| | |_| |   <  __/
-|____/ \__,_|_|\_\___|
+________________________________________________
 
+Hello! I'm
+__      __          
+\ \    / /_  __  __ 
+ \ \  / / _ \ \ \/ /
+  \ \/ / (_) | >  < 
+   \__/ \___/ /_/\_\
+
+What can I do for you?
+________________________________________________
+
+todo read textbook
+    ____________________________________________
+
+    Got it. I've added this task:
+      [T][ ] read textbook
+    Now you have 1 tasks in the list.
+    ____________________________________________
+
+deadline return book /by Sunday
+    ____________________________________________
+
+    Got it. I've added this task:
+      [D][ ] (by: Sunday)
+    Now you have 2 tasks in the list.
+    ____________________________________________
+
+event project meeting /from Monday 2pm /to 4pm
+    ____________________________________________
+
+    Got it. I've added this task:
+      [E][ ] (from: Monday 2pm to: 4pm)
+    Now you have 3 tasks in the list.
+    ____________________________________________
+
+list
+    ____________________________________________
+
+    1.[T][ ] read textbook
+    2.[D][ ] (by: Sunday)
+    3.[E][ ] (from: Monday 2pm to: 4pm)
+    ____________________________________________
+
+mark 1
+    Nice! I've marked this task as done:
+      [X] read textbook
+list
+    ____________________________________________
+
+    1.[T][X] read textbook
+    2.[D][ ] (by: Sunday)
+    3.[E][ ] (from: Monday 2pm to: 4pm)
+    ____________________________________________
+
+unmark 1
+    I've unmarked this task as done:
+      [ ] read textbook
+bye
+________________________________________________
+
+Bye. Hope to see you again!
+________________________________________________
