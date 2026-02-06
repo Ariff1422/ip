@@ -17,108 +17,176 @@ public class Vox {
         System.out.println(RESET + "    ____________________________________________\n");
     }
 
-    public static void main(String[] args) {
-        String name = "Vox";
-        // Initialise Scanner
-        Scanner in = new Scanner(System.in);
-        // Initialise a String array to maintain user list
-        ArrayList<Task> userInputs = new ArrayList<Task>();
+    private static void printWelcomeMessage() {
+        // Prints the initial Startup Messages
         String logo = "__      __          \n"
                 + "\\ \\    / /_  __  __ \n"
-                + " \\ \\  / / _ \\ \\ \\/ /\n"
+                + " \\ \\  / / _ \\ \\/ /\n"
                 + "  \\ \\/ / (_) | >  < \n"
                 + "   \\__/ \\___/ /_/\\_\\\n";
         printLine();
         System.out.println("Hello! I'm\n" + logo);
         System.out.println("What can I do for you?");
         printLine();
-        while (true) {
-            String line;
-            System.out.print(GREEN);
-            line = in.nextLine();
-            System.out.print(RESET);
+    }
 
-            if (line.trim().startsWith("todo")) {
-                // Extract the description after "todo "
-                String description = line.substring(4).trim();
-                Todo newTodo = new Todo(description);
-                userInputs.add(newTodo);
-
-                printBreaks();
-                System.out.println("    Got it. I've added this task:");
-                System.out.println("      " + newTodo); // Uses the new toString()
-                System.out.println("    Now you have " + userInputs.size() + " tasks in the list.");
-                printBreaks();
-            }
-
-            else if (line.trim().startsWith("deadline")) {
-                // Extract the description after "deadline "
-                String description = line.substring(4).trim();
-                // Since you are splitting with the /, it will disappear after the splitting so replace first space with ": "
-                String limit = line.trim().split("/", 2)[1].replaceFirst(" ", ": ");
-                Deadline newDeadline = new Deadline(description, limit);
-                userInputs.add(newDeadline);
-
-                printBreaks();
-                System.out.println("    Got it. I've added this task:");
-                System.out.println("      " + newDeadline); // Uses the new toString()
-                System.out.println("    Now you have " + userInputs.size() + " tasks in the list.");
-                printBreaks();
-            }
-
-            else if (line.trim().startsWith("event")) {
-                // Extract the description after "deadline "
-                String description = line.substring(4).trim();
-                // Since you are splitting with the /, it will disappear after the splitting so replace first space with ": "
-                String limit = line.trim().split("/", 2)[1].replaceFirst(" ", ": ");
-                Event newEvent = new Event(description, limit);
-                userInputs.add(newEvent);
-
-                printBreaks();
-                System.out.println("    Got it. I've added this task:");
-                System.out.println("      " + newEvent); // Uses the new toString()
-                System.out.println("    Now you have " + userInputs.size() + " tasks in the list.");
-                printBreaks();
-            }
-
-            // Terminating after bye
-            else if (line.trim().equalsIgnoreCase("bye")) {
-                printLine();
-                break;
-            }
-            // Printing the items as a list
-            else if (line.trim().equalsIgnoreCase("list")) {
-                printBreaks();
-                for (int i = 0; i < userInputs.size(); i++) {
-                    // Retrieve task for printing
-                    Task t = userInputs.get(i);
-                    System.out.println("    " + (i + 1) + "." + userInputs.get(i));
-                }
-                printBreaks();
-            }
-            // Marking the items
-            else if (line.trim().startsWith("mark")) {
-                int index = Integer.parseInt(line.split(" ")[1]) - 1;
-                Task t = userInputs.get(index);
-                t.setMarked(); // Make the task marked
-                System.out.println("    Nice! I've marked this task as done:");
-                System.out.println("      [" + t.getStatusIcon() + "] " + t.getTaskName());
-            }
-            // Unmarking the items
-            else if (line.trim().startsWith("unmark")) {
-                int index = Integer.parseInt(line.split(" ")[1]) - 1;
-                Task t = userInputs.get(index);
-                t.setUnmarked(); // Make the task unmarked
-                System.out.println("    I've unmarked this task as done:");
-                System.out.println("      [" + t.getStatusIcon() + "] " + t.getTaskName());
-            } else {
-                userInputs.add(new Task(line));
-                printBreaks();
-                System.out.println("    added: " + line);
-                printBreaks();
-            }
-        }
+    private static void printExitMessage() {
+        // Prints the ending message when bye is seen
+        printLine();
         System.out.println("Bye. Hope to see you again!");
         printLine();
+    }
+
+    private static void listTasks(ArrayList<Task> tasks) {
+        printBreaks();
+        for (int i = 0; i < tasks.size(); i++) {
+            // Retrieve task for printing
+            Task t = tasks.get(i);
+            System.out.println("    " + (i + 1) + "." + tasks.get(i));
+        }
+        printBreaks();
+    }
+
+    private static void markTask(String arguments, ArrayList<Task> tasks) {
+        // Try and Catch blocks in case the number that the user gives is out of bounds
+        try {
+            int index = Integer.parseInt(arguments) - 1;
+            Task t = tasks.get(index);
+            t.setMarked();
+            System.out.println("    Nice! I've marked this task as done:");
+            System.out.println("      [" + t.getStatusIcon() + "] " + t.getTaskName());
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            System.out.println("    Error: Please provide a valid task number.");
+        }
+    }
+
+    private static void unmarkTask(String arguments, ArrayList<Task> tasks) {
+        // Similar to markTask another try and exception block to prevent crashing
+        try {
+            int index = Integer.parseInt(arguments) - 1;
+            Task t = tasks.get(index);
+            t.setUnmarked();
+            System.out.println("    I've unmarked this task as done:");
+            System.out.println("      [" + t.getStatusIcon() + "] " + t.getTaskName());
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            System.out.println("    Error: Please provide a valid task number.");
+        }
+    }
+
+    private static void addTodo(String description, ArrayList<Task> tasks) {
+        // Adds todo
+        if (description.isEmpty()) {
+            System.out.println("    Error: The description of a todo cannot be empty.");
+            return;
+        }
+        Task newTodo = new Todo(description);
+        addTaskToStorage(newTodo, tasks);
+    }
+
+    private static void addDeadline(String args, ArrayList<Task> tasks) {
+        // Expected format: description /by time
+        String[] parts = args.split("/", 2);
+        if (parts.length < 2) {
+            System.out.println("    Error: Please use /by to specify the deadline time.");
+            return;
+        }
+        String description = parts[0].trim();
+        String by = parts[1].replaceFirst(" ", ": ");
+
+        Task newDeadline = new Deadline(description, by);
+        addTaskToStorage(newDeadline, tasks);
+    }
+
+    private static void addEvent(String args, ArrayList<Task> tasks) {
+        // Expected format: description /from time /to time
+        String[] parts = args.split("/", 2);
+        // Exception programming for now, to be made more robust later
+        if (parts.length < 2) {
+            System.out.println("    Error: Please use /from and /to for events.");
+            return;
+        }
+        String description = parts[0].trim();
+        String limit = parts[1].replaceFirst(" ", ": ");
+
+        Task newEvent = new Event(description, limit);
+        addTaskToStorage(newEvent, tasks);
+    }
+
+    private static void addGenericTask(String line, ArrayList<Task> tasks) {
+        // echoes the task typed in the terminal
+        tasks.add(new Task(line));
+        printBreaks();
+        System.out.println("    added: " + line);
+        printBreaks();
+    }
+
+    private static void addTaskToStorage(Task task, ArrayList<Task> tasks) {
+        // adds task to the ArrayList and prints the confirmation for todo, deadline and event
+        tasks.add(task);
+        printBreaks();
+        System.out.println("    Got it. I've added this task:");
+        System.out.println("      " + task);
+        System.out.println("    Now you have " + tasks.size() + " tasks in the list.");
+        printBreaks();
+    }
+
+    private static void handleCommand(String command, String arguments, ArrayList<Task> tasks, String fullLine) {
+        // based on the commands whether its deadline, event, etc.
+        switch (command) {
+        case "list":
+            listTasks(tasks);
+            break;
+        case "mark":
+            markTask(arguments, tasks);
+            break;
+        case "unmark":
+            unmarkTask(arguments, tasks);
+            break;
+        case "todo":
+            addTodo(arguments, tasks);
+            break;
+        case "deadline":
+            addDeadline(arguments, tasks);
+            break;
+        case "event":
+            addEvent(arguments, tasks);
+            break;
+        default:
+            // Default behavior: add as a generic task by echoing
+            addGenericTask(fullLine, tasks);
+            break;
+        }
+    }
+
+    public static void main(String[] args) {
+        String name = "Vox";
+        Scanner in = new Scanner(System.in);
+        ArrayList<Task> userInputs = new ArrayList<Task>();
+
+        printWelcomeMessage();
+
+        while (true) {
+            System.out.print(GREEN);
+            String line = in.nextLine().trim();
+            System.out.print(RESET);
+
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            // Split command from arguments (e.g., "todo read" -> ["todo", "read"])
+            String[] parts = line.split(" ", 2);
+            String command = parts[0].toLowerCase();
+            String arguments = parts.length > 1 ? parts[1] : "";
+
+            // bye is handled separately to break out of the loop when command is sensed
+            if (command.equals("bye")) {
+                printExitMessage();
+                break;
+            }
+
+            // Command Dispatcher: Decides which method to call
+            handleCommand(command, arguments, userInputs, line);
+        }
     }
 }
