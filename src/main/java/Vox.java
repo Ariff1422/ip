@@ -5,20 +5,17 @@ public class Vox {
     // Define Color Constants (ANSI Escape Codes)
     public static final String RESET = "\u001B[0m";
     public static final String GREEN = "\u001B[32m";
+    public static final String RED = "\u001B[31m";
 
     public static void printLine() {
-        // For ease of calling the function and utilising the lines as section breaks
         System.out.println("________________________________________________\n");
     }
 
     public static void printBreaks() {
-        // For the separations between the echoing
-        // RESET to prevent any unforeseen break in green colour
         System.out.println(RESET + "    ____________________________________________\n");
     }
 
     private static void printWelcomeMessage() {
-        // Prints the initial Startup Messages
         String logo = "__      __          \n"
                 + "\\ \\    / /_  __  __ \n"
                 + " \\ \\  / / _ \\ \\/ /\n"
@@ -31,7 +28,6 @@ public class Vox {
     }
 
     private static void printExitMessage() {
-        // Prints the ending message when bye is seen
         printLine();
         System.out.println("Bye. Hope to see you again!");
         printLine();
@@ -39,89 +35,124 @@ public class Vox {
 
     private static void listTasks(ArrayList<Task> tasks) {
         printBreaks();
-        for (int i = 0; i < tasks.size(); i++) {
-            // Retrieve task for printing
-            Task t = tasks.get(i);
-            System.out.println("    " + (i + 1) + "." + tasks.get(i));
+        if (tasks.isEmpty()) {
+            System.out.println("    Your list is currently empty.");
+        } else {
+            System.out.println("    Here are the tasks in your list:");
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println("    " + (i + 1) + "." + tasks.get(i));
+            }
         }
         printBreaks();
     }
 
-    private static void markTask(String arguments, ArrayList<Task> tasks) {
-        // Try and Catch blocks in case the number that the user gives is out of bounds
+    private static void markTask(String arguments, ArrayList<Task> tasks) throws VoxException {
         try {
+            if (arguments.isEmpty()) {
+                throw new VoxException("Please specify which task number to mark.");
+            }
             int index = Integer.parseInt(arguments) - 1;
             Task t = tasks.get(index);
             t.setMarked();
+            printBreaks();
             System.out.println("    Nice! I've marked this task as done:");
             System.out.println("      [" + t.getStatusIcon() + "] " + t.getTaskName());
-        } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            System.out.println("    Error: Please provide a valid task number.");
+            printBreaks();
+        } catch (NumberFormatException e) {
+            throw new VoxException("That is not a valid number.");
+        } catch (IndexOutOfBoundsException e) {
+            throw new VoxException("Task number " + arguments + " does not exist.");
         }
     }
 
-    private static void unmarkTask(String arguments, ArrayList<Task> tasks) {
-        // Similar to markTask another try and exception block to prevent crashing
+    private static void unmarkTask(String arguments, ArrayList<Task> tasks) throws VoxException {
         try {
+            if (arguments.isEmpty()) {
+                throw new VoxException("Please specify which task number to unmark.");
+            }
             int index = Integer.parseInt(arguments) - 1;
             Task t = tasks.get(index);
             t.setUnmarked();
+            printBreaks();
             System.out.println("    I've unmarked this task as done:");
             System.out.println("      [" + t.getStatusIcon() + "] " + t.getTaskName());
-        } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            System.out.println("    Error: Please provide a valid task number.");
+            printBreaks();
+        } catch (NumberFormatException e) {
+            throw new VoxException("That is not a valid number.");
+        } catch (IndexOutOfBoundsException e) {
+            throw new VoxException("Task number " + arguments + " does not exist.");
         }
     }
 
-    private static void addTodo(String description, ArrayList<Task> tasks) {
-        // Adds todo
+    private static void addTodo(String description, ArrayList<Task> tasks) throws VoxException {
         if (description.isEmpty()) {
-            System.out.println("    Error: The description of a todo cannot be empty.");
-            return;
+            throw new VoxException("The description of a todo cannot be empty.");
         }
         Task newTodo = new Todo(description);
         addTaskToStorage(newTodo, tasks);
     }
 
-    private static void addDeadline(String args, ArrayList<Task> tasks) {
-        // Expected format: description /by time
-        String[] parts = args.split("/", 2);
-        if (parts.length < 2) {
-            System.out.println("    Error: Please use /by to specify the deadline time.");
-            return;
+    // UPDATED: Now throws VoxException for missing /by or empty description
+    private static void addDeadline(String args, ArrayList<Task> tasks) throws VoxException {
+        if (args.isEmpty()) {
+            throw new VoxException("The description of a deadline cannot be empty.");
         }
+
+        // Expected format: description /by time
+        String[] parts = args.split("/by", 2);
+
+        if (parts.length < 2) {
+            throw new VoxException("A deadline must have a /by date. (Format: description /by time)");
+        }
+
         String description = parts[0].trim();
-        String by = parts[1].replaceFirst(" ", ": ");
+        String by = parts[1].trim();
+
+        if (description.isEmpty()) {
+            throw new VoxException("The description of a deadline cannot be empty.");
+        }
+        if (by.isEmpty()) {
+            throw new VoxException("The date of a deadline cannot be empty.");
+        }
 
         Task newDeadline = new Deadline(description, by);
         addTaskToStorage(newDeadline, tasks);
     }
 
-    private static void addEvent(String args, ArrayList<Task> tasks) {
-        // Expected format: description /from time /to time
-        String[] parts = args.split("/", 2);
-        // Exception programming for now, to be made more robust later
-        if (parts.length < 2) {
-            System.out.println("    Error: Please use /from and /to for events.");
-            return;
+    // Throws VoxException for missing /from or /to
+    private static void addEvent(String args, ArrayList<Task> tasks) throws VoxException {
+        if (args.isEmpty()) {
+            throw new VoxException("The description of an event cannot be empty.");
         }
-        String description = parts[0].trim();
-        String limit = parts[1].replaceFirst(" ", ": ");
 
-        Task newEvent = new Event(description, limit);
+        // Expected format: description /from time /to time
+        // Split by /from first
+        String[] parts = args.split("/from", 2);
+
+        if (parts.length < 2) {
+            throw new VoxException("An event must have a /from date.");
+        }
+
+        String description = parts[0].trim();
+        String rest = parts[1]; // this contains "time /to time"
+
+        String[] timeParts = rest.split("/to", 2);
+        if (timeParts.length < 2) {
+            throw new VoxException("An event must have a /to date.");
+        }
+
+        String from = timeParts[0].trim();
+        String to = timeParts[1].trim();
+
+        if (description.isEmpty()) {
+            throw new VoxException("The description of an event cannot be empty.");
+        }
+
+        Task newEvent = new Event(description, from + " to: " + to);
         addTaskToStorage(newEvent, tasks);
     }
 
-    private static void addGenericTask(String line, ArrayList<Task> tasks) {
-        // echoes the task typed in the terminal
-        tasks.add(new Task(line));
-        printBreaks();
-        System.out.println("    added: " + line);
-        printBreaks();
-    }
-
     private static void addTaskToStorage(Task task, ArrayList<Task> tasks) {
-        // adds task to the ArrayList and prints the confirmation for todo, deadline and event
         tasks.add(task);
         printBreaks();
         System.out.println("    Got it. I've added this task:");
@@ -130,8 +161,8 @@ public class Vox {
         printBreaks();
     }
 
-    private static void handleCommand(String command, String arguments, ArrayList<Task> tasks, String fullLine) {
-        // based on the commands whether its deadline, event, etc.
+    // UPDATED: Method signature now includes 'throws VoxException'
+    private static void handleCommand(String command, String arguments, ArrayList<Task> tasks) throws VoxException {
         switch (command) {
         case "list":
             listTasks(tasks);
@@ -152,14 +183,12 @@ public class Vox {
             addEvent(arguments, tasks);
             break;
         default:
-            // Default behavior: add as a generic task by echoing
-            addGenericTask(fullLine, tasks);
-            break;
+            // Satisfies the requirement to handle unknown commands
+            throw new VoxException("I'm sorry, but I don't know what that means :-(");
         }
     }
 
     public static void main(String[] args) {
-        String name = "Vox";
         Scanner in = new Scanner(System.in);
         ArrayList<Task> userInputs = new ArrayList<Task>();
 
@@ -174,19 +203,24 @@ public class Vox {
                 continue;
             }
 
-            // Split command from arguments (e.g., "todo read" -> ["todo", "read"])
             String[] parts = line.split(" ", 2);
             String command = parts[0].toLowerCase();
             String arguments = parts.length > 1 ? parts[1] : "";
 
-            // bye is handled separately to break out of the loop when command is sensed
             if (command.equals("bye")) {
                 printExitMessage();
                 break;
             }
 
-            // Command Dispatcher: Decides which method to call
-            handleCommand(command, arguments, userInputs, line);
+            // MAIN ERROR HANDLING BLOCK
+            try {
+                handleCommand(command, arguments, userInputs);
+            } catch (VoxException e) {
+                printBreaks();
+                // Use RED color for the error message if you want
+                System.out.println(RED + "    OOPS!!! " + e.getMessage() + RESET);
+                printBreaks();
+            }
         }
     }
 }
