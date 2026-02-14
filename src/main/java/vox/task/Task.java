@@ -1,3 +1,5 @@
+package vox.task;
+
 public class Task {
     private String taskName;
     private boolean isMarked;

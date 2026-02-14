@@ -1,4 +1,6 @@
-public class Event extends Task{
+package vox.task;
+
+public class Event extends Task {
     protected String by;
 
     public Event(String description, String by) {
@@ -9,6 +11,6 @@ public class Event extends Task{
 
     @Override
     public String toString() {
-        return "[E][" + getStatusIcon() + "] (" + by + ")";
+        return "[E][" + getStatusIcon() + "] " + getTaskName() + " (from: " + by + ")";
     }
 }

@@ -1,5 +1,11 @@
+package vox;
+
 import java.util.Scanner;
 import java.util.ArrayList;
+import vox.task.Task;
+import vox.task.Deadline;
+import vox.task.Todo;
+import vox.task.Event;
 
 public class Vox {
     // Define Color Constants (ANSI Escape Codes)
@@ -61,7 +67,7 @@ public class Vox {
         } catch (NumberFormatException e) {
             throw new VoxException("That is not a valid number.");
         } catch (IndexOutOfBoundsException e) {
-            throw new VoxException("Task number " + arguments + " does not exist.");
+            throw new VoxException("Vox.task.Task number " + arguments + " does not exist.");
         }
     }
 
@@ -80,7 +86,7 @@ public class Vox {
         } catch (NumberFormatException e) {
             throw new VoxException("That is not a valid number.");
         } catch (IndexOutOfBoundsException e) {
-            throw new VoxException("Task number " + arguments + " does not exist.");
+            throw new VoxException("Vox.task.Task number " + arguments + " does not exist.");
         }
     }
 
@@ -92,7 +98,7 @@ public class Vox {
         addTaskToStorage(newTodo, tasks);
     }
 
-    // UPDATED: Now throws VoxException for missing /by or empty description
+    // UPDATED: Now throws Vox.VoxException for missing /by or empty description
     private static void addDeadline(String args, ArrayList<Task> tasks) throws VoxException {
         if (args.isEmpty()) {
             throw new VoxException("The description of a deadline cannot be empty.");
@@ -119,7 +125,7 @@ public class Vox {
         addTaskToStorage(newDeadline, tasks);
     }
 
-    // Throws VoxException for missing /from or /to
+    // Throws Vox.VoxException for missing /from or /to
     private static void addEvent(String args, ArrayList<Task> tasks) throws VoxException {
         if (args.isEmpty()) {
             throw new VoxException("The description of an event cannot be empty.");
@@ -161,7 +167,7 @@ public class Vox {
         printBreaks();
     }
 
-    // UPDATED: Method signature now includes 'throws VoxException'
+    // UPDATED: Method signature now includes 'throws Vox.VoxException'
     private static void handleCommand(String command, String arguments, ArrayList<Task> tasks) throws VoxException {
         switch (command) {
         case "list":

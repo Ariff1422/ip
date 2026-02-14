@@ -1,4 +1,6 @@
-public class Deadline extends Task{
+package vox.task;
+
+public class Deadline extends Task {
     protected String by;
 
     public Deadline(String description, String by) {
@@ -9,6 +11,6 @@ public class Deadline extends Task{
 
     @Override
     public String toString() {
-        return "[D][" + getStatusIcon() + "] (" + by + ")";
+        return "[D][" + getStatusIcon() + "] " + getTaskName() + " (by: " + by + ")";
     }
 }
