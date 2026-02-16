@@ -2,6 +2,7 @@ package vox;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+
 import vox.task.Task;
 import vox.task.Deadline;
 import vox.task.Todo;
@@ -50,6 +51,30 @@ public class Vox {
             }
         }
         printBreaks();
+    }
+
+    private static void deleteTask(String arguments, ArrayList<Task> tasks) throws VoxException {
+        try {
+            if (arguments.isEmpty()) {
+                throw new VoxException("Please specify which task number to delete.");
+            }
+            int index = Integer.parseInt(arguments) - 1;
+
+            if (index < 0 || index >= tasks.size()) {
+                throw new VoxException("Task number " + arguments + " does not exist.");
+            }
+
+            Task removedTask = tasks.remove(index);
+
+            printBreaks();
+            System.out.println("    Noted. I've removed this task:");
+            System.out.println("      " + removedTask);
+            System.out.println("    Now you have " + tasks.size() + " tasks in the list.");
+            printBreaks();
+
+        } catch (NumberFormatException e) {
+            throw new VoxException("That is not a valid number.");
+        }
     }
 
     private static void markTask(String arguments, ArrayList<Task> tasks) throws VoxException {
@@ -172,6 +197,9 @@ public class Vox {
         switch (command) {
         case "list":
             listTasks(tasks);
+            break;
+        case "delete":
+            deleteTask(arguments, tasks);
             break;
         case "mark":
             markTask(arguments, tasks);
