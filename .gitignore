@@ -14,5 +14,8 @@ src/main/resources/docs/
 *.class
 bin/
 
+#ignore the data
+./data
+
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
