@@ -8,6 +8,11 @@ import vox.task.Deadline;
 import vox.task.Todo;
 import vox.task.Event;
 
+// Reading Files
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.File;
+
 public class Vox {
     // Define Color Constants (ANSI Escape Codes)
     public static final String RESET = "\u001B[0m";
@@ -38,6 +43,45 @@ public class Vox {
         printLine();
         System.out.println("Bye. Hope to see you again!");
         printLine();
+    }
+
+    private static ArrayList<Task> loadTasks() {
+        ArrayList<Task> loadedTasks = new ArrayList<>();
+        File file = new File("./data/vox.txt");
+
+        if (!file.exists()) {
+            return loadedTasks; // Return empty list if file doesn't exist
+        }
+
+        try {
+            Scanner fileScanner = new Scanner(file);
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                String[] parts = line.split(" \\| "); // Split by " | "
+
+                String type = parts[0];
+                boolean isDone = parts[1].equals("1");
+                String description = parts[2];
+
+                Task task = null;
+                if (type.equals("T")) {
+                    task = new Todo(description);
+                } else if (type.equals("D")) {
+                    task = new Deadline(description, parts[3]);
+                } else if (type.equals("E")) {
+                    task = new Event(description, parts[3]);
+                }
+
+                if (task != null) {
+                    if (isDone) task.setMarked();
+                    loadedTasks.add(task);
+                }
+            }
+            fileScanner.close();
+        } catch (Exception e) {
+            System.out.println("Error loading tasks: " + e.getMessage());
+        }
+        return loadedTasks;
     }
 
     private static void listTasks(ArrayList<Task> tasks) {
@@ -123,7 +167,7 @@ public class Vox {
         addTaskToStorage(newTodo, tasks);
     }
 
-    // UPDATED: Now throws Vox.VoxException for missing /by or empty description
+    // Now throws Vox.VoxException for missing /by or empty description
     private static void addDeadline(String args, ArrayList<Task> tasks) throws VoxException {
         if (args.isEmpty()) {
             throw new VoxException("The description of a deadline cannot be empty.");
@@ -192,7 +236,29 @@ public class Vox {
         printBreaks();
     }
 
-    // UPDATED: Method signature now includes 'throws Vox.VoxException'
+    private static void saveTasks(ArrayList<Task> tasks) {
+        try {
+            File directory = new File("./data");
+            if (!directory.exists()) {
+                directory.mkdirs(); // Creates the directory if it's missing
+            }
+
+            FileWriter writer = new FileWriter("./data/vox.txt");
+
+            for (Task task : tasks) {
+                // Write the task + a new line
+                writer.write(task.toFileString() + "\n");
+            }
+
+            writer.close();
+
+        } catch (IOException e) {
+            // Captures IO errors (like permission issues) and prints a safe message
+            System.out.println("Something went wrong: " + e.getMessage());
+        }
+    }
+
+    // Method signature now includes 'throws Vox.VoxException'
     private static void handleCommand(String command, String arguments, ArrayList<Task> tasks) throws VoxException {
         switch (command) {
         case "list":
@@ -200,21 +266,27 @@ public class Vox {
             break;
         case "delete":
             deleteTask(arguments, tasks);
+            saveTasks(tasks);
             break;
         case "mark":
             markTask(arguments, tasks);
+            saveTasks(tasks);
             break;
         case "unmark":
             unmarkTask(arguments, tasks);
+            saveTasks(tasks);
             break;
         case "todo":
             addTodo(arguments, tasks);
+            saveTasks(tasks);
             break;
         case "deadline":
             addDeadline(arguments, tasks);
+            saveTasks(tasks);
             break;
         case "event":
             addEvent(arguments, tasks);
+            saveTasks(tasks);
             break;
         default:
             // Satisfies the requirement to handle unknown commands
@@ -224,7 +296,7 @@ public class Vox {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        ArrayList<Task> userInputs = new ArrayList<Task>();
+        ArrayList<Task> userInputs = loadTasks();
 
         printWelcomeMessage();
 
