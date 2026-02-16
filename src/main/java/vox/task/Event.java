@@ -10,6 +10,11 @@ public class Event extends Task {
     }
 
     @Override
+    public String toFileString() {
+        return "E" + super.toFileString() + " | " + by;
+    }
+
+    @Override
     public String toString() {
         return "[E][" + getStatusIcon() + "] " + getTaskName() + " (from: " + by + ")";
     }

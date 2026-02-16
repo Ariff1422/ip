@@ -27,6 +27,10 @@ public class Task {
         return (isMarked ? "X" : " ");
     }
 
+    public String toFileString() {
+        return " | " + (isMarked ? "1" : "0") + " | " + taskName;
+    }
+
     @Override
     public String toString() {
         // Returns: [X] task name
