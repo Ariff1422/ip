@@ -68,6 +68,9 @@ public class Vox {
      */
     private void handleCommand(String command, String arguments) throws VoxException {
         switch (command) {
+        case "help":
+            ui.showHelp();
+            break;
         case "list":
             ui.showTaskList(tasks.getTasks());
             break;

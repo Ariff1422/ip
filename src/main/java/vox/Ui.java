@@ -161,6 +161,24 @@ public class Ui {
     }
 
     /**
+     * Displays all available commands and their formats.
+     */
+    public void showHelp() {
+        showBreaks();
+        System.out.println("    Here are the available commands:");
+        System.out.println("      list                              - Lists all tasks");
+        System.out.println("      todo <desc>                       - Adds a todo task");
+        System.out.println("      deadline <desc> /by yyyy-MM-dd HHmm  - Adds a deadline task");
+        System.out.println("      event <desc> /from <start> /to <end> - Adds an event task");
+        System.out.println("      mark <number>                     - Marks a task as done");
+        System.out.println("      unmark <number>                   - Unmarks a task");
+        System.out.println("      delete <number>                   - Deletes a task");
+        System.out.println("      find <keyword>                    - Finds tasks by keyword");
+        System.out.println("      bye                               - Exits the application");
+        showBreaks();
+    }
+
+    /**
      * Displays tasks that match a search keyword.
      *
      * @param matches the list of matching tasks
