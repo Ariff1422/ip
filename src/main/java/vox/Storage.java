@@ -11,13 +11,29 @@ import vox.task.Event;
 import vox.task.Task;
 import vox.task.Todo;
 
+/**
+ * Handles loading and saving of tasks to a persistent file.
+ * Tasks are stored in a pipe-delimited format.
+ */
 public class Storage {
     private final String filePath;
 
+    /**
+     * Constructs a Storage instance with the given file path.
+     *
+     * @param filePath path to the file where tasks are saved and loaded from
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Loads tasks from the storage file.
+     * Returns an empty list if the file does not exist.
+     *
+     * @return list of tasks loaded from the file
+     * @throws VoxException if the file exists but cannot be parsed
+     */
     public ArrayList<Task> load() throws VoxException {
         ArrayList<Task> loadedTasks = new ArrayList<>();
         File file = new File(filePath);
@@ -60,6 +76,11 @@ public class Storage {
         return loadedTasks;
     }
 
+    /**
+     * Saves all tasks to the storage file, creating the directory if needed.
+     *
+     * @param tasks the list of tasks to save
+     */
     public void save(ArrayList<Task> tasks) {
         try {
             File directory = new File(filePath).getParentFile();
