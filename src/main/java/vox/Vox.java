@@ -50,6 +50,9 @@ public class Vox {
         case "list":
             ui.showTaskList(tasks.getTasks());
             break;
+        case "find":
+            ui.showMatchingTasks(tasks.findTasks(arguments));
+            break;
         case "delete": {
             Task removed = tasks.deleteTask(arguments);
             storage.save(tasks.getTasks());
