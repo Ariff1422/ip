@@ -1,8 +1,9 @@
 package vox;
 
-import java.util.Scanner;
-import vox.task.Task;
 import java.util.ArrayList;
+import java.util.Scanner;
+
+import vox.task.Task;
 
 /**
  * Handles all user interaction for the Vox application.

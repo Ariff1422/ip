@@ -42,11 +42,14 @@ public class Storage {
             return loadedTasks;
         }
 
-        try {
-            Scanner fileScanner = new Scanner(file);
+        try (Scanner fileScanner = new Scanner(file)) {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
                 String[] parts = line.split(" \\| ");
+
+                if (parts.length < 3) {
+                    continue; // skip malformed lines
+                }
 
                 String type = parts[0];
                 boolean isDone = parts[1].equals("1");
@@ -55,9 +58,9 @@ public class Storage {
                 Task task = null;
                 if (type.equals("T")) {
                     task = new Todo(description);
-                } else if (type.equals("D")) {
+                } else if (type.equals("D") && parts.length >= 4) {
                     task = new Deadline(description, parts[3]);
-                } else if (type.equals("E")) {
+                } else if (type.equals("E") && parts.length >= 4) {
                     task = new Event(description, parts[3]);
                 }
 
@@ -68,7 +71,6 @@ public class Storage {
                     loadedTasks.add(task);
                 }
             }
-            fileScanner.close();
         } catch (Exception e) {
             throw new VoxException("Error loading tasks: " + e.getMessage());
         }
@@ -88,11 +90,11 @@ public class Storage {
                 directory.mkdirs();
             }
 
-            FileWriter writer = new FileWriter(filePath);
-            for (Task task : tasks) {
-                writer.write(task.toFileString() + "\n");
+            try (FileWriter writer = new FileWriter(filePath)) {
+                for (Task task : tasks) {
+                    writer.write(task.toFileString() + "\n");
+                }
             }
-            writer.close();
         } catch (IOException e) {
             System.out.println("Something went wrong saving tasks: " + e.getMessage());
         }
