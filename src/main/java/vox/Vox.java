@@ -2,11 +2,21 @@ package vox;
 
 import vox.task.Task;
 
+/**
+ * Main class for the Vox chatbot application.
+ * Initializes the application components and runs the main command loop.
+ */
 public class Vox {
     private final Storage storage;
     private TaskList tasks;
     private final Ui ui;
 
+    /**
+     * Constructs a Vox instance, loading tasks from the given file path.
+     * If loading fails, starts with an empty task list.
+     *
+     * @param filePath path to the file used for task persistence
+     */
     public Vox(String filePath) {
         ui = new Ui();
         storage = new Storage(filePath);
@@ -18,6 +28,10 @@ public class Vox {
         }
     }
 
+    /**
+     * Starts the main loop of the application.
+     * Reads commands from the user until a "bye" command is entered.
+     */
     public void run() {
         ui.showWelcome();
 
@@ -45,6 +59,13 @@ public class Vox {
         }
     }
 
+    /**
+     * Dispatches the parsed command to the appropriate handler.
+     *
+     * @param command   the command keyword (e.g. "list", "todo", "delete")
+     * @param arguments the remainder of the user's input after the command word
+     * @throws VoxException if the command is unknown or arguments are invalid
+     */
     private void handleCommand(String command, String arguments) throws VoxException {
         switch (command) {
         case "list":
@@ -94,6 +115,11 @@ public class Vox {
         }
     }
 
+    /**
+     * Entry point of the application.
+     *
+     * @param args command-line arguments (not used)
+     */
     public static void main(String[] args) {
         new Vox("./data/vox.txt").run();
     }
