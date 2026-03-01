@@ -33,7 +33,7 @@ public class Ui {
      * Prints an indented divider line used around most responses.
      */
     public void showBreaks() {
-        System.out.println(RESET + "    ____________________________________________\n");
+        System.out.println("    ____________________________________________\n");
     }
 
     /**
@@ -80,13 +80,15 @@ public class Ui {
 
     /**
      * Reads a command from the user via standard input.
+     * Color codes are only applied when running in an interactive terminal.
      *
      * @return the trimmed input string entered by the user
      */
     public String readCommand() {
-        System.out.print(GREEN);
+        boolean isInteractive = System.console() != null;
+        if (isInteractive) System.out.print(GREEN);
         String line = scanner.nextLine().trim();
-        System.out.print(RESET);
+        if (isInteractive) System.out.print(RESET);
         return line;
     }
 

@@ -12,15 +12,21 @@ then
     rm ACTUAL.TXT
 fi
 
+# clear saved data so the test always starts from a clean state
+if [ -e "../data/vox.txt" ]
+then
+    rm ../data/vox.txt
+fi
+
 # compile the code into the bin folder, terminates if error occurred
-if ! javac -cp ../src/main/java -Xlint:none -d ../bin ../src/main/java/*.java
+if ! javac -cp ../src/main/java -Xlint:none -d ../bin ../src/main/java/vox/task/*.java ../src/main/java/vox/*.java
 then
     echo "********** BUILD FAILURE **********"
     exit 1
 fi
 
 # run the program, feed commands from input.txt file and redirect the output to the ACTUAL.TXT
-java -classpath ../bin Vox < input.txt > ACTUAL.TXT
+java -classpath ../bin vox.Vox < input.txt > ACTUAL.TXT
 
 # convert to UNIX format
 cp EXPECTED.TXT EXPECTED-UNIX.TXT
