@@ -118,6 +118,19 @@ public class TaskList {
         }
     }
 
+    public ArrayList<Task> findTasks(String keyword) throws VoxException {
+        if (keyword.isEmpty()) {
+            throw new VoxException("Please specify a keyword to search for.");
+        }
+        ArrayList<Task> matches = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getTaskName().toLowerCase().contains(keyword.toLowerCase())) {
+                matches.add(task);
+            }
+        }
+        return matches;
+    }
+
     public Task unmarkTask(String arguments) throws VoxException {
         try {
             if (arguments.isEmpty()) {
